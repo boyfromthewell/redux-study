@@ -11,6 +11,8 @@
       }
     </style>
     <div id="red"></div>
+    <div id="blue"></div>
+    <div id="green"></div>
     <script>
       // reducer의 역할 : dispatch로 인해 액션이 들어오면 액션 값과 기존의 state 값을 참조해
       // 새로운 state로 만들어줌
@@ -18,8 +20,19 @@
         if (state === undefined) {
           return { color: "yellow" };
         }
+
+        var newState;
+        if (action.type === "CHANGE_COLOR") {
+          newState = Object.assign({}, state, { color: action.color });
+        }
+        console.log(action.type, state, newState);
+        return newState;
       }
-      var store = Redux.createStore(reducer);
+      var store = Redux.createStore(
+        reducer,
+        window.__REDUX_DEVTOOLS_EXTENSION__ &&
+          window.__REDUX_DEVTOOLS_EXTENSION__()
+      ); // state 담아둔 변수 (단 하나의 store를 유지, reducer를 통해 가공)
 
       console.log(store.getState());
 
@@ -29,14 +42,44 @@
                       <div class="container" id="component_red" style="background-color:${state.color}">
                           <h1>red</h1>
                           <input type="button" value="fire" onclick="
-                          document.querySelector('#component_red').style.backgroundColor='red';
-                          document.querySelector('#component_green').style.backgroundColor='red';
-                          document.querySelector('#component_blue').style.backgroundColor='red';
+                            store.dispatch({type:'CHANGE_COLOR', color:'red'});
                           ">
                       </div>
                   `;
+        // dispatch : reducer를 호출하도록 약속
       }
+      store.subscribe(red); // state 바뀔때마다 red 함수 호출
       red();
+
+      function blue() {
+        var state = store.getState();
+        document.querySelector("#blue").innerHTML = `
+                      <div class="container" id="component_red" style="background-color:${state.color}">
+                          <h1>blue</h1>
+                          <input type="button" value="fire" onclick="
+                            store.dispatch({type:'CHANGE_COLOR', color:'blue'});
+                          ">
+                      </div>
+                  `;
+        // dispatch : reducer를 호출하도록 약속
+      }
+      store.subscribe(blue); // state 바뀔때마다 blue 함수 호출
+      blue();
+
+      function green() {
+        var state = store.getState();
+        document.querySelector("#green").innerHTML = `
+                      <div class="container" id="component_red" style="background-color:${state.color}">
+                          <h1>green</h1>
+                          <input type="button" value="fire" onclick="
+                            store.dispatch({type:'CHANGE_COLOR', color:'green'});
+                          ">
+                      </div>
+                  `;
+        // dispatch : reducer를 호출하도록 약속
+      }
+      store.subscribe(green); // state 바뀔때마다 green 함수 호출
+      green();
     </script>
   </body>
 </html>
